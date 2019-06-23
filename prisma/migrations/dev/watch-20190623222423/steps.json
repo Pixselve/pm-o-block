@@ -1,0 +1,42 @@
+{
+  "version": "0.0.107",
+  "steps": [
+    {
+      "stepType": "CreateField",
+      "model": "Warn",
+      "name": "authorId",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": true
+    },
+    {
+      "stepType": "CreateField",
+      "model": "Warn",
+      "name": "target",
+      "type": {
+        "Relation": {
+          "to": "User",
+          "to_fields": [
+            "id"
+          ],
+          "name": "UserToWarn",
+          "on_delete": "None"
+        }
+      },
+      "arity": "required",
+      "isUnique": false
+    },
+    {
+      "stepType": "DeleteField",
+      "model": "Warn",
+      "name": "author"
+    },
+    {
+      "stepType": "DeleteField",
+      "model": "Warn",
+      "name": "targetId"
+    }
+  ]
+}

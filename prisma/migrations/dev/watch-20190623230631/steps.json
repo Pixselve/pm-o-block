@@ -1,0 +1,15 @@
+{
+  "version": "0.0.107",
+  "steps": [
+    {
+      "stepType": "CreateField",
+      "model": "User",
+      "name": "opinion",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "optional",
+      "isUnique": false
+    }
+  ]
+}

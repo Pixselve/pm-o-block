@@ -1,0 +1,25 @@
+datasource db {
+    provider = "sqlite"
+    url      = "file:dev.db"
+    default  = true
+}
+
+generator photon {
+    provider = "photonjs"
+    output   = "node_modules/@generated/photon"
+}
+
+model User {
+    id    String  @default(cuid()) @id @unique
+    discordId String  @unique
+    joinDate DateTime   @default(now())
+    warns Warn[]
+    messages Int @default(0)
+}
+model Warn {
+    id    String  @default(cuid()) @id @unique
+    reason String
+    timestamp DateTime   @default(now())
+    author User
+    targetId String @unique
+}

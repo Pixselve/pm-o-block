@@ -1,0 +1,41 @@
+{
+  "version": "0.0.107",
+  "steps": [
+    {
+      "stepType": "CreateModel",
+      "name": "BadWord",
+      "embedded": false
+    },
+    {
+      "stepType": "CreateField",
+      "model": "BadWord",
+      "name": "id",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": true,
+      "id": {
+        "strategy": "Auto",
+        "sequence": null
+      },
+      "default": {
+        "Expression": [
+          "cuid",
+          "String",
+          []
+        ]
+      }
+    },
+    {
+      "stepType": "CreateField",
+      "model": "BadWord",
+      "name": "value",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "required",
+      "isUnique": true
+    }
+  ]
+}
