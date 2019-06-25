@@ -13,14 +13,17 @@
     "image-downloader": "^3.4.2",
     "nsfwjs": "^2.0.0",
     "@tensorflow/tfjs-node": "^1.2.1",
-    "jpeg-js": "latest"
+    "jpeg-js": "latest",
+    "pngjs": "latest",
+    "captchagen": "^1.2.0"
   },
   "devDependencies": {
     "@types/gapi.client.vision": "^1.0.1",
     "@types/node": "^12.0.8",
+    "@types/pngjs": "^3.3.2",
+    "nodemon": "^1.19.1",
     "prisma2": "^0.0.73",
     "ts-node": "7.0.1",
-    "typescript": "3.5.2",
-    "nodemon": "^1.19.1"
+    "typescript": "3.5.2"
   }
 }
