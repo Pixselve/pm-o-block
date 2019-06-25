@@ -8,4 +8,6 @@
 * Block NSFW images posted in non NSFW text channels (Thanks to nsfwjs and GantMan's nsfw model for TensorFlow)
 * Block a list of bad words you can specify
 * Give the ability to warn a user and store all the informations in the database
+* Block invite links
+* Verification system when new users join the server with the ability to provide a custom base role
 * ...and more to come
