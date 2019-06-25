@@ -1,0 +1,15 @@
+{
+  "version": "0.0.107",
+  "steps": [
+    {
+      "stepType": "CreateField",
+      "model": "Guild",
+      "name": "baseRoleAfterVerificationId",
+      "type": {
+        "Base": "String"
+      },
+      "arity": "optional",
+      "isUnique": false
+    }
+  ]
+}
