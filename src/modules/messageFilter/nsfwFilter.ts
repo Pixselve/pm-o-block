@@ -1,37 +1,30 @@
-import {GuildMember, Message, TextChannel} from "discord.js";
-
-const load = require('nsfwjs').load;
-const fs = require('fs');
-const jpeg = require('jpeg-js');
-import {PNG} from "pngjs";
-
-const tf = require('@tensorflow/tfjs-node');
+import { GuildMember, Message, TextChannel } from "discord.js";
+import { PNG }                               from "pngjs";
 // @ts-ignore
-import * as download from "image-downloader";
-import {Embeded} from "../../classes";
+import * as download                         from "image-downloader";
+import { photon }                            from "../../index";
+import { NSFWJS }                            from "nsfwjs/dist";
+import { MemberProtection, MyEmbededError }  from "../../classes/embeded";
+import * as fs                               from "fs";
+import * as jpeg                             from "jpeg-js";
+import { RawImageData }                      from "jpeg-js";
+import * as tf                               from "@tensorflow/tfjs-node";
 
-import {photon} from "../../index";
-import {NSFWJS} from "nsfwjs/dist";
-
-
-// @ts-ignore
-const readImage = async (path) => {
+const readImage = async (path: string) => {
   const buf = fs.readFileSync(path);
   const fileType = path.split(".").pop();
   if (fileType === "jpg" || fileType === "jpeg") {
-    const pixels = jpeg.decode(buf, true);
-    return pixels;
+    return jpeg.decode(buf, true);
   } else if (fileType === "png") {
-    const pixels = PNG.sync.read(buf);
-    return pixels;
+    return PNG.sync.read(buf);
   } else {
     return "";
   }
 
 };
 
-// @ts-ignore
-const imageByteArray = (image, numChannels) => {
+const imageByteArray = (image: RawImageData<Uint8Array> | "", numChannels: number) => {
+  if (image === "") return;
   const pixels = image.data;
   const numPixels = image.width * image.height;
   const values = new Int32Array(numPixels * numChannels);
@@ -45,20 +38,21 @@ const imageByteArray = (image, numChannels) => {
   return values;
 };
 
-
-// @ts-ignore
-const imageToInput = (image, numChannels) => {
+const imageToInput = (image: RawImageData<Uint8Array> | "", numChannels: number) => {
+  if (image === "") return;
   const values = imageByteArray(image, numChannels);
   const outShape = [image.height, image.width, numChannels];
+  // @ts-ignore
   const input = tf.tensor3d(values, outShape, 'int32');
 
   return input;
 };
+
 export default async (message: Message, model: NSFWJS) => {
   try {
 
     const image = message.attachments.first();
-    const {filename} = await download.image({
+    const { filename } = await download.image({
       url: image.url,
       dest: `src/images/${image.id}_${image.filename}`
     });
@@ -71,7 +65,7 @@ export default async (message: Message, model: NSFWJS) => {
       } else {
         if (predictions[0].probability >= 0.60) {
           await message.delete();
-          const [{id, warns}] = await photon.guildUsers.findMany({
+          const [{ id, warns }] = await photon.guildUsers.findMany({
             where: {
               guild: {
                 discordId: message.guild.id
@@ -97,16 +91,17 @@ export default async (message: Message, model: NSFWJS) => {
               }
             }
           });
-          const repliedMessage = await message.channel.send(new Embeded("👷 Member Protection Brigade", `It seems that your message contains inappropriate content. Please go to an NSFW channel to send this photograph. You have been warned. You have ${warns.length + 1} warns in total`, 0xf44242));
+          const repliedMessage = await message.channel.send(new MemberProtection(`It seems that your message contains inappropriate content. Please go to an NSFW channel to send this photograph. You have been warned. You have ${warns.length + 1} warns in total`, 0xf44242).embed);
 
           // @ts-ignore
           await repliedMessage.delete(10000);
+          return true;
         } else if (predictions[0].probability >= 0.50) {
-          const repliedMessage = await message.channel.send(new Embeded("👷 Member Protection Brigade", "It is possible that the previously posted content is inappropriate for this channel. If you consider it inappropriate, react with the emoji :thumbsup:.", 0xff8800));
+          const repliedMessage = await message.channel.send(new MemberProtection("It is possible that the previously posted content is inappropriate for this channel. If you consider it inappropriate, react with the emoji :thumbsup:.", 0xff8800).embed);
           // @ts-ignore
           await repliedMessage.react("👍");
           // @ts-ignore
-          const collected = await repliedMessage.awaitReactions((reaction, user) => reaction.emoji.name === '👍', {time: 10000});
+          const collected = await repliedMessage.awaitReactions((reaction, user) => reaction.emoji.name === '👍', { time: 10000 });
           const thumbsUps = collected.first().count - 1;
           // @ts-ignore
           const onlineUser = repliedMessage.guild.members.filter((m: GuildMember) => m.presence.status === "online").array().length;
@@ -116,15 +111,17 @@ export default async (message: Message, model: NSFWJS) => {
             await message.delete();
             // @ts-ignore
             await repliedMessage.delete();
-            const confirmationMessage = await message.channel.send(new Embeded("👷 Member Protection Brigade", "The message has been deleted. Thank you for your participation.", 0x5fd827));
+            const confirmationMessage = await message.channel.send(new MemberProtection("The message has been deleted. Thank you for your participation.", 0x5fd827).embed);
             // @ts-ignore
             await confirmationMessage.delete(10000);
+            return true;
           } else {
             // @ts-ignore
             await repliedMessage.delete();
-            const confirmationMessage = await message.channel.send(new Embeded("👷 Member Protection Brigade", "The message has not been deleted.", 0xf44242));
+            const confirmationMessage = await message.channel.send(new MemberProtection("The message has not been deleted.", 0xf44242).embed);
             // @ts-ignore
             await confirmationMessage.delete(10000);
+            return false;
           }
         }
       }
@@ -132,7 +129,7 @@ export default async (message: Message, model: NSFWJS) => {
     fs.unlinkSync(filename);
   } catch (e) {
     console.log(e);
-    const repliedMessage = await message.channel.send(new Embeded("An error has occurred", "The image could not be analyzed.", 0xf44242, "https://img.icons8.com/flat_round/64/000000/no-entry.png"));
+    const repliedMessage = await message.channel.send(new MyEmbededError("The image could not be analysed").embed);
     // @ts-ignore
     repliedMessage.delete(10000);
   }

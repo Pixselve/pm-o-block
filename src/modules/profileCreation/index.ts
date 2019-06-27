@@ -1,6 +1,6 @@
 import {GuildMember} from "discord.js";
 import {photon} from "../../index";
-import {EmbededError} from "../../classes/embeded";
+import {MyEmbededError} from "../../classes/embeded";
 
 export default async (user: GuildMember) => {
   try {
@@ -49,6 +49,6 @@ export default async (user: GuildMember) => {
       });
     }
   } catch (e) {
-    user.guild.defaultChannel.send(new EmbededError(e.message));
+    user.guild.defaultChannel.send(new MyEmbededError(e.message).embed);
   }
 }

@@ -1,23 +1,21 @@
-import Photon from '@generated/photon';
-import * as Discord from "discord.js";
+import Photon          from '@generated/photon';
+import * as Discord    from "discord.js";
+import profileCreation from './modules/profileCreation';
+import { load }        from "nsfwjs";
+import config          from "./config";
+
+import commands from "./modules/commands";
+
+import { beforeVerification } from './modules/joinVerification';
+import addBotServer           from './modules/addBotServer';
+import messageFilter          from './modules/messageFilter';
 
 export const photon = new Photon();
 export const client = new Discord.Client();
 
 
-import nsfwDetector from "./modules/nsfwDetector/index";
-import profileCreation from './modules/profileCreation';
-import {warnList} from "./modules/warns";
-import {ping} from './modules/ping';
-import {load} from "nsfwjs";
-import {addBadWord, badWord, badWordList} from "./modules/badWord";
-import config from "./config";
-import {joinVerification, captchaVerification, toggleVerification} from './modules/joinVerification';
-import addBotServer from './modules/addBotServer';
-import {attrRole} from "./modules/joinVerification/newRoleAttribution";
-
 (async () => {
-  const model = await load(`file://nsfwjs/`, {size: 299});
+  const model = await load(`file://nsfwjs/`, { size: 299 });
   client.on("ready", async () => {
     console.log(`Logged as ${client.user.tag}`);
   });
@@ -26,42 +24,28 @@ import {attrRole} from "./modules/joinVerification/newRoleAttribution";
   });
   client.on("guildMemberAdd", async (user) => {
     await profileCreation(user);
-    await joinVerification(user);
+    await beforeVerification(user);
   });
-  client.on("guildMemberUpdate", async (member) => {
-    await profileCreation(member);
-    await joinVerification(member);
+  client.on("guildMemberUpdate", async (user) => {
+    await profileCreation(user);
+    await beforeVerification(user);
   });
   client.on("message", async message => {
-    if (message.author.bot) return;
-    if (message.channel.type === "dm") {
-      await captchaVerification(message);
+    if (await messageFilter(message, model)) return;
+
+    const foundCommand = commands.find(command => command.test(message));
+    if (foundCommand) {
+      // @ts-ignore
+      await foundCommand.exec(message, foundCommand.getArgs(message.content));
     } else {
-      if (await badWord(message)) return;
-      if (message.content.includes("$warnlist")) {
-        await warnList(message);
-      }
-      if (message.content.includes("$badWordList")) {
-        await badWordList(message);
-      }
-      if (message.content.includes("$ping")) {
-        await ping(message);
-      }
-      if (message.content.includes("$addBadWord")) {
-        await addBadWord(message);
-      }
-      if (message.content.includes("$verification")) {
-        await toggleVerification(message);
-      }
-      if (message.content.includes("$baserole")) {
-        await attrRole(message);
-      }
-      if (message.attachments.array().length > 0) {
-        await nsfwDetector(message, model);
-      }
+      return;
     }
 
+
   });
+  client.on("messageUpdate", (async (oldMessage, newMessage) => {
+    if (await messageFilter(newMessage, model)) return;
+  }));
   client.login(config.token);
 })();
 

@@ -16,6 +16,8 @@ model Guild {
     badWords BadWord[]
     verificationRequired Boolean? @default(true)
     baseRoleAfterVerificationId String?
+    backup GuildBackup[]
+    nsfwConfig NSFWVerification
 }
 model User {
     id    String  @default(cuid()) @id @unique
@@ -43,4 +45,44 @@ model GuildUser {
     captchaText String?
     warns Warn[]
     opinion String?
+}
+model GuildBackup {
+    id    String  @default(uuid()) @id @unique
+    guild Guild
+    roles Role[]
+    channels Channel[]
+}
+model Role {
+    id    String  @default(cuid()) @id @unique
+    guildBackup GuildBackup
+    name String
+    color Int
+    permissions Int
+    mentionable Boolean
+    position Int
+    hoist Boolean
+}
+model Channel {
+    id    String  @default(cuid()) @id @unique
+    guildBackup GuildBackup
+    name String
+    channelId String
+    parent String?
+    type String
+    position Int
+    permissions PermissionOverwrites[]
+}
+model PermissionOverwrites {
+    id    String  @default(cuid()) @id @unique
+    allow Int
+    deny Int
+    type String
+    channel Channel
+}
+model NSFWVerification {
+    id    String  @default(cuid()) @id @unique
+    guild Guild
+    activated Boolean @default(true)
+    possibilityRemoveDirectly Float @default(0.60)
+    possibilityRemoveWithVote Float @default(0.50)
 }
