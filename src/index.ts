@@ -27,8 +27,8 @@ export const client = new Discord.Client();
     await beforeVerification(user);
   });
   client.on("guildMemberUpdate", async (user) => {
-    await profileCreation(user);
-    await beforeVerification(user);
+    // await profileCreation(user);
+    // await beforeVerification(user);
     // await photon.guilds.create({
     //   data: {
     //     discordId: "591948284134817798",
