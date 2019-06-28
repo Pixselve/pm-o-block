@@ -1,6 +1,8 @@
 import { Guild, TextChannel }               from "discord.js";
 import { photon }                           from "../../index";
 import { MemberProtection, MyEmbededError } from "../../classes/embeded";
+import profileCreation                      from "../profileCreation";
+import { afterVerification }                from "../joinVerification";
 
 export default async (guild: Guild) => {
   try {
@@ -11,14 +13,17 @@ export default async (guild: Guild) => {
         discordId: guild.id
       }
     });
-
     if (alreadyGuild.length > 0) {
+      await Promise.all(guild.members.map(user => profileCreation(user)));
+      await Promise.all(guild.members.map(user => afterVerification(user)));
       if (defaultChannel instanceof TextChannel) {
         defaultChannel.send(new MemberProtection(`Your server has been successfully recovered. Welcome to ${guild.client.user.username}`).embed);
       } else {
         return;
       }
     } else {
+      await Promise.all(guild.members.map(user => profileCreation(user)));
+      await Promise.all(guild.members.map(user => afterVerification(user)));
       await photon.guilds.create({
         data: {
           discordId: guild.id,

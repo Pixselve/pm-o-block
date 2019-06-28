@@ -97,7 +97,7 @@ const verification = async (member: GuildMember) => {
     throw e;
   }
 };
-const afterVerification = async (member: GuildMember) => {
+export const afterVerification = async (member: GuildMember) => {
   try {
     const userDB = await photon.guildUsers.updateMany({
       where: {

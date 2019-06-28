@@ -7,9 +7,11 @@ const ban = async (message: Message, args: string[]) => {
     const member = message.mentions.users.first();
     const guildMember = message.guild.member(member);
     if (!guildMember) throw new Error("The user you are trying to ban does not exists");
+    const [mention, ...argsWithoutMension] = args;
+    const reason = argsWithoutMension.join(" ") || "NONE";
     await guildMember.ban({
       days: 7,
-      reason: args[1] || "NONE"
+      reason: reason
     });
     await message.channel.send({
       embed: {
@@ -31,7 +33,7 @@ const ban = async (message: Message, args: string[]) => {
           },
           {
             name: "Reason",
-            value: args[1] || "NONE",
+            value: reason,
             inline: true
           }
         ]
@@ -41,7 +43,7 @@ const ban = async (message: Message, args: string[]) => {
     message.channel.send(new MyEmbededError(e.message).embed);
   }
 };
-export const banCommand = new Command("ban", "Ban a member of the server", "BAN_MEMBERS", "MODERATION", "(\\s+<@\\d{18}>)(\\s+(\\s*\\w+)+)?", ban, [new CommandArgument("user mention", false, 1), new CommandArgument("reason", true, 1)]);
+export const banCommand = new Command("ban", "Ban a member of the server", "BAN_MEMBERS", "MODERATION", "(\\s+<@\\d{18}>)(\\s+.+)?", ban, [new CommandArgument("user mention", false, 1), new CommandArgument("reason", true, 1)]);
 
 const unban = async (message: Message, args: string[]) => {
   try {
@@ -49,7 +51,8 @@ const unban = async (message: Message, args: string[]) => {
     if (!user) throw new Error("The user you are trying to unban does not exists");
     const ban = await message.guild.fetchBan(user);
     if (!ban) throw new Error("No banned user find for this ID. Did you already use the BanHammer ?");
-    const reason = args[1] || "NONE";
+    const [mention, ...argsWithoutMension] = args;
+    const reason = argsWithoutMension.join(" ") || "NONE";
     await message.guild.unban(user, reason);
 
     await message.channel.send({
@@ -85,4 +88,4 @@ const unban = async (message: Message, args: string[]) => {
   }
 };
 
-export const unbanCommand = new Command("unban", "Unban a user", "BAN_MEMBERS", "MODERATION", "(\\s+\\d{18})(\\s+(\\s*\\w+)+)?", unban, [new CommandArgument("user ID", false, 1), new CommandArgument("reason", true, 1)]);
+export const unbanCommand = new Command("unban", "Unban a user", "BAN_MEMBERS", "MODERATION", "(\\s+\\d{18})(\\s+.+)?", unban, [new CommandArgument("user ID", false, 1), new CommandArgument("reason", true, 1)]);
