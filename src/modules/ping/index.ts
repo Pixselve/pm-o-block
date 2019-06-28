@@ -6,5 +6,5 @@ const ping = async (message: Message) => {
   await message.reply(`My pingy pong is ${Math.round(client.ping)} ms :smirk:`);
 };
 
-const pingCommand = new Command("ping", "Give my pingy pong", "SEND_MESSAGES", "", ping);
+const pingCommand = new Command("ping", "Give my pingy pong", "SEND_MESSAGES", "MISC", "", ping);
 export default pingCommand;

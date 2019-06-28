@@ -16,7 +16,7 @@ const backup = async (message: Message) => {
     await message.channel.send(new MyEmbededError(e.message).embed);
   }
 };
-export const backupCommand = new Command("backup", "Initiate the server backup", "ADMINISTRATOR", "", backup);
+export const backupCommand = new Command("backup", "Initiate the server backup", "ADMINISTRATOR", "MODERATION", "", backup);
 
 const doApplyBackup = async (message: Message, args: string[]) => {
   try {
@@ -27,7 +27,7 @@ const doApplyBackup = async (message: Message, args: string[]) => {
 
 
 };
-export const doApplyBackupCommand = new Command("applybackup", "Apply the server backup", "ADMINISTRATOR", "(\\s+[0-z]{25})", doApplyBackup, new CommandArgument("backup secret key", false, 1));
+export const doApplyBackupCommand = new Command("applybackup", "Apply the server backup", "ADMINISTRATOR", "MODERATION", "(\\s+([0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12}))", doApplyBackup, new CommandArgument("backup secret key", false, 1));
 
 
 const dropDBBackup = async (message: Message) => {
@@ -57,13 +57,13 @@ const dropDBBackup = async (message: Message) => {
         }
       }
     });
-    await message.channel.send(new MemberProtection("DB dropped").embed);
+    await message.channel.send(new MemberProtection("All backups have been properly deleted.").embed);
   } catch (e) {
     console.log(e);
-    await message.channel.send(new MyEmbededError("ERROR").embed);
+    await message.channel.send(new MyEmbededError("An unexpected error occurred. The backup could not be performed.").embed);
     await message.channel.send(new MyEmbededError(e.message).embed);
 
   }
 };
 
-export const dropDBBackupCommand = new Command("dropdbroles", "Drop the backup DB", "ADMINISTRATOR", "", dropDBBackup);
+export const dropDBBackupCommand = new Command("dropbackup", "Deletes all backups from this server. Be careful, this action is irreversible.", "ADMINISTRATOR", "MODERATION", "", dropDBBackup);

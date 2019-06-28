@@ -15,4 +15,4 @@ const badWordList = async (message: Message) => {
     message.channel.send(new MyEmbededError(e.message).embed);
   }
 };
-export const badWordListCommand = new Command("badwordlist", "Add one or multiple words in the forbidden word list", "SEND_MESSAGES", "", badWordList);
+export const badWordListCommand = new Command("badwordlist", "Get the number of bad words you have registered", "SEND_MESSAGES", "MODERATION", "", badWordList);

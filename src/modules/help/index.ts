@@ -1,7 +1,8 @@
-import {Message} from "discord.js";
+import {Message}                  from "discord.js";
 import Command, {CommandArgument} from "../../classes/command";
-import commands from "../commands";
-import {MyEmbededError} from "../../classes/embeded";
+import commands                   from "../commands";
+import {MyEmbededError}           from "../../classes/embeded";
+import command                    from "../../classes/command";
 
 const helpCommand = async (message: Message, args?: string[]) => {
   try {
@@ -57,10 +58,10 @@ const helpCommand = async (message: Message, args?: string[]) => {
             },
             {
               name: "Moderation commands",
-              value: commands.map(command => `\`${command.command}\`: ${command.description}`).join("\n")
+              value: commands.filter(command => command.commandType === "MODERATION").map(command => `\`${command.command}\`: ${command.description}`).join("\n")
             }, {
               name: "Miscellaneous commands",
-              value: commands.map(command => `\`${command.command}\`: ${command.description}`).join("\n")
+              value: commands.filter(command => command.commandType === "MISC").map(command => `\`${command.command}\`: ${command.description}`).join("\n")
             },
           ]
         }
@@ -70,5 +71,5 @@ const helpCommand = async (message: Message, args?: string[]) => {
     await message.channel.send(new MyEmbededError(e.message).embed);
   }
 };
-const helpCommandCommand = new Command("help", "Display all the command help", "SEND_MESSAGES", "(\\s+[A-z]+)?", helpCommand, new CommandArgument("command", true, 1));
+const helpCommandCommand = new Command("help", "Display all the command help", "SEND_MESSAGES", "MISC", "(\\s+[A-z]+)?", helpCommand, new CommandArgument("command", true, 1));
 export default helpCommandCommand;

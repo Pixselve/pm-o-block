@@ -29,6 +29,28 @@ export const client = new Discord.Client();
   client.on("guildMemberUpdate", async (user) => {
     await profileCreation(user);
     await beforeVerification(user);
+    // await photon.guilds.create({
+    //   data: {
+    //     discordId: "591948284134817798",
+    //     nsfwConfig: {
+    //       create: {
+    //         activated: true,
+    //         possibilityRemoveDirectly: 0.5,
+    //         possibilityRemoveWithVote: 0.5
+    //       }
+    //     }
+    //   }
+    // });
+
+    // await photon.nSFWVerifications.create({
+    //   data: {
+    //     guild: {
+    //       connect: {
+    //         discordId: user.guild.id
+    //       }
+    //     }
+    //   }
+    // });
   });
   client.on("message", async message => {
     if (await messageFilter(message, model)) return;

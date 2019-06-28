@@ -41,7 +41,7 @@ const ban = async (message: Message, args: string[]) => {
     message.channel.send(new MyEmbededError(e.message).embed);
   }
 };
-export const banCommand = new Command("ban", "Ban a member of the server", "BAN_MEMBERS", "(\\s+<@\\d{18}>)(\\s+(\\s*\\w+)+)?", ban, [new CommandArgument("user mention", false, 1), new CommandArgument("reason", true, 1)]);
+export const banCommand = new Command("ban", "Ban a member of the server", "BAN_MEMBERS", "MODERATION", "(\\s+<@\\d{18}>)(\\s+(\\s*\\w+)+)?", ban, [new CommandArgument("user mention", false, 1), new CommandArgument("reason", true, 1)]);
 
 const unban = async (message: Message, args: string[]) => {
   try {
@@ -85,4 +85,4 @@ const unban = async (message: Message, args: string[]) => {
   }
 };
 
-export const unbanCommand = new Command("unban", "Unban a user", "BAN_MEMBERS", "(\\s+\\d{18})(\\s+(\\s*\\w+)+)?", unban, [new CommandArgument("user ID", false, 1), new CommandArgument("reason", true, 1)]);
+export const unbanCommand = new Command("unban", "Unban a user", "BAN_MEMBERS", "MODERATION", "(\\s+\\d{18})(\\s+(\\s*\\w+)+)?", unban, [new CommandArgument("user ID", false, 1), new CommandArgument("reason", true, 1)]);

@@ -25,7 +25,7 @@ export const toggleVerification = async (message: Message) => {
     message.channel.send(new MyEmbededError(e.message).embed);
   }
 };
-export const toggleVerificationCommand = new Command("verification", "Toggle the verification system", "ADMINISTRATOR", "((\\s+)(false|true))", toggleVerification, new CommandArgument("true | false", false, 1));
+export const toggleVerificationCommand = new Command("verification", "Toggle the verification system", "ADMINISTRATOR", "MODERATION", "((\\s+)(false|true))", toggleVerification, new CommandArgument("true | false", false, 1));
 
 
 export const beforeVerification = async (member: GuildMember) => {

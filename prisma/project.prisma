@@ -3,7 +3,6 @@ datasource db {
     url      = "file:dev.db"
     default  = true
 }
-
 generator photon {
     provider = "photonjs"
     output   = "node_modules/@generated/photon"
@@ -12,49 +11,49 @@ model Guild {
     id    String  @default(cuid()) @id @unique
     discordId String @unique
     createdAt DateTime
-    users GuildUser[]
-    badWords BadWord[]
+    users GuildUser[] @relation(name: "GuildUserByGuild", onDelete: CASCADE)
+    badWords BadWord[] @relation(name: "BadWordByGuild", onDelete: CASCADE)
     verificationRequired Boolean? @default(true)
     baseRoleAfterVerificationId String?
-    backup GuildBackup[]
-    nsfwConfig NSFWVerification
+    backup GuildBackup[] @relation(name: "GuildBackupByGuild", onDelete: CASCADE)
+    nsfwConfig NSFWVerification @relation(name: "NSFWVerificationByGuild", onDelete: CASCADE)
 }
 model User {
     id    String  @default(cuid()) @id @unique
     discordId String @unique
-    guildUsers GuildUser[]
+    guildUsers GuildUser[] @relation(name: "GuildUserByUser", onDelete: CASCADE)
 }
 model Warn {
     id    String  @default(cuid()) @id @unique
     reason String
     timestamp DateTime   @default(now())
     authorId String @unique
-    target GuildUser
+    target GuildUser @relation(name: "WarnByGuildUser")
 }
 model BadWord {
     id    String  @default(cuid()) @id @unique
     value String @unique
-    guild Guild
+    guild Guild @relation(name: "BadWordByGuild")
 }
 model GuildUser {
     id    String  @default(cuid()) @id @unique
-    user User
-    guild Guild
+    user User @relation(name: "GuildUserByUser")
+    guild Guild @relation(name: "GuildUserByGuild")
     verified Boolean @default(false)
     messages Int @default(0)
     captchaText String?
-    warns Warn[]
+    warns Warn[] @relation(name: "WarnByGuildUser", onDelete: CASCADE)
     opinion String?
 }
 model GuildBackup {
     id    String  @default(uuid()) @id @unique
-    guild Guild
-    roles Role[]
-    channels Channel[]
+    guild Guild @relation(name: "GuildBackupByGuild")
+    roles Role[] @relation(name: "RolesByGuildBackup", onDelete: CASCADE)
+    channels Channel[] @relation(name: "ChannelsByGuildBackup", onDelete: CASCADE)
 }
 model Role {
     id    String  @default(cuid()) @id @unique
-    guildBackup GuildBackup
+    guildBackup GuildBackup @relation(name: "RolesByGuildBackup")
     name String
     color Int
     permissions Int
@@ -64,24 +63,24 @@ model Role {
 }
 model Channel {
     id    String  @default(cuid()) @id @unique
-    guildBackup GuildBackup
+    guildBackup GuildBackup @relation(name: "ChannelsByGuildBackup")
     name String
     channelId String
     parent String?
     type String
     position Int
-    permissions PermissionOverwrites[]
+    permissions PermissionOverwrites[] @relation(name: "PermissionOverwritesByChannel", onDelete: CASCADE)
 }
 model PermissionOverwrites {
     id    String  @default(cuid()) @id @unique
     allow Int
     deny Int
     type String
-    channel Channel
+    channel Channel @relation(name: "PermissionOverwritesByChannel")
 }
 model NSFWVerification {
     id    String  @default(cuid()) @id @unique
-    guild Guild
+    guild Guild @relation(name: "NSFWVerificationByGuild")
     activated Boolean @default(true)
     possibilityRemoveDirectly Float @default(0.60)
     possibilityRemoveWithVote Float @default(0.50)

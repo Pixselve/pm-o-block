@@ -16,7 +16,7 @@ export default class Command {
   private readonly prefix = config.commandPrefix;
   public readonly command: string;
 
-  constructor(public name: string, public description: string, public permission: PermissionResolvable, public argsRegex: string, public exec: object, public args?: CommandArgument | CommandArgument[]) {
+  constructor(public name: string, public description: string, public permission: PermissionResolvable, public commandType: "MODERATION" | "MISC", public argsRegex: string, public exec: object, public args?: CommandArgument | CommandArgument[]) {
     this.command = `${this.prefix}${name}`;
   }
 

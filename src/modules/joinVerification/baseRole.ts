@@ -49,4 +49,4 @@ const setBaseRole = async (message: Message, args: string[]) => {
   }
 };
 
-export const setBaseRoleCommand = new Command("setbaserole", "Set the role the bot will give after the captcha validation", "SEND_MESSAGES", "((\\s+<@\\d{18}>)|(\\s+\\d{18}))", setBaseRole, new CommandArgument("user ID or user mention", false, 1));
+export const setBaseRoleCommand = new Command("setbaserole", "Set the role the bot will give after the captcha validation", "ADMINISTRATOR", "MODERATION", "((\\s+<@\\d{18}>)|(\\s+\\d{18}))", setBaseRole, new CommandArgument("user ID or user mention", false, 1));

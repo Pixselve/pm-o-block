@@ -8,5 +8,6 @@ import { resetBadWordsCommand }                                     from "./mess
 import { badWordListCommand }                                       from "./messageFilter/badWord/badWordList";
 import { kickCommand }                                              from "./kick";
 import { setBaseRoleCommand }                                       from "./joinVerification/baseRole";
+import setNsfwConfig                                                from "./messageFilter/nsfwFilter/updateConfig";
 
-export default [addBadWordCommand, resetBadWordsCommand, badWordListCommand, helpCommand, pingCommand, toggleVerificationCommand, banCommand, unbanCommand, backupCommand, doApplyBackupCommand, dropDBBackupCommand, kickCommand, setBaseRoleCommand];
+export default [addBadWordCommand, resetBadWordsCommand, badWordListCommand, helpCommand, pingCommand, toggleVerificationCommand, banCommand, unbanCommand, backupCommand, doApplyBackupCommand, dropDBBackupCommand, kickCommand, setBaseRoleCommand, setNsfwConfig];

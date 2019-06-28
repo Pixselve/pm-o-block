@@ -40,4 +40,4 @@ const kick = async (message: Message, args: string[]) => {
   }
 };
 
-export const kickCommand = new Command("kick", "Kick a user", "SEND_MESSAGES", "(\\s+<@\\d{18}>)(\\s+(\\s*\\w+)+)?", kick, [new CommandArgument("user ID", false, 1), new CommandArgument("reason", true, 1)]);
+export const kickCommand = new Command("kick", "Kick a user", "KICK_MEMBERS", "MODERATION", "(\\s+<@\\d{18}>)(\\s+(\\s*\\w+)+)?", kick, [new CommandArgument("user ID", false, 1), new CommandArgument("reason", true, 1)]);

@@ -18,4 +18,4 @@ const resetBadWords = async (message: Message) => {
 
   }
 };
-export const resetBadWordsCommand = new Command("resetbadwords", "Add one or multiple words in the forbidden word list", "ADMINISTRATOR", "", resetBadWords);
+export const resetBadWordsCommand = new Command("resetbadwords", "Reset your list of bad words", "ADMINISTRATOR", "MODERATION", "", resetBadWords);

@@ -29,4 +29,4 @@ const addBadWord = async (message: Message) => {
     message.channel.send(new MyEmbededError(e.message).embed);
   }
 };
-export const addBadWordCommand = new Command("addbadword", "Add one or multiple words in the forbidden word list", "ADMINISTRATOR", "(\\s+[A-z]+)+", addBadWord, new CommandArgument("word", false, "INF"));
+export const addBadWordCommand = new Command("addbadword", "Add one or multiple words in the forbidden word list", "ADMINISTRATOR", "MODERATION", "(\\s+[A-z]+)+", addBadWord, new CommandArgument("word", false, "INF"));

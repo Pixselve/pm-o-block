@@ -59,11 +59,19 @@ export default async (message: Message, model: NSFWJS) => {
     const logo = await readImage(filename);
     const input = imageToInput(logo, 3);
     const predictions = await model.classify(input);
-
-    if (message.channel instanceof TextChannel && !message.channel.nsfw) {
+    const { nsfwConfig } = await photon.guilds.findOne({
+      where: {
+        discordId: message.guild.id
+      },
+      select: {
+        nsfwConfig: true
+      }
+    });
+    if (!nsfwConfig) throw new Error("NSFW settings or guild not found");
+    if (message.channel instanceof TextChannel && !message.channel.nsfw && nsfwConfig.activated) {
       if (predictions[0].className === "Neutral" || predictions[0].className === "Drawing") {
       } else {
-        if (predictions[0].probability >= 0.60) {
+        if (predictions[0].probability >= nsfwConfig.possibilityRemoveDirectly) {
           await message.delete();
           const [{ id, warns }] = await photon.guildUsers.findMany({
             where: {
@@ -96,7 +104,7 @@ export default async (message: Message, model: NSFWJS) => {
           // @ts-ignore
           await repliedMessage.delete(10000);
           return true;
-        } else if (predictions[0].probability >= 0.50) {
+        } else if (predictions[0].probability >= nsfwConfig.possibilityRemoveWithVote) {
           const repliedMessage = await message.channel.send(new MemberProtection("It is possible that the previously posted content is inappropriate for this channel. If you consider it inappropriate, react with the emoji :thumbsup:.", 0xff8800).embed);
           // @ts-ignore
           await repliedMessage.react("👍");
