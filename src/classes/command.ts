@@ -1,5 +1,5 @@
-import config from "../config";
-import {Message, PermissionResolvable} from "discord.js";
+import config                            from "../config";
+import { Message, PermissionResolvable } from "discord.js";
 
 
 export class CommandArgument {
@@ -13,25 +13,11 @@ export class CommandArgument {
 }
 
 export default class Command {
-  private readonly prefix = config.commandPrefix;
   public readonly command: string;
+  private readonly prefix = config.commandPrefix;
 
   constructor(public name: string, public description: string, public permission: PermissionResolvable, public commandType: "MODERATION" | "MISC", public argsRegex: string, public exec: object, public args?: CommandArgument | CommandArgument[]) {
     this.command = `${this.prefix}${name}`;
-  }
-
-  test(message: Message) {
-    const regex = new RegExp(`^\\${this.prefix}${this.name}${this.argsRegex}$`, "i");
-
-
-    return regex.test(message.content) && message.member.hasPermission(this.permission);
-
-
-  }
-
-  getArgs(message: string) {
-    const [command, ...args] = message.split(/\s+/);
-    return args;
   }
 
   get format() {
@@ -46,5 +32,31 @@ export default class Command {
       return this.command;
     }
 
+  }
+
+  test(message: Message) {
+    const regex = new RegExp(`^\\${this.prefix}${this.name}${this.argsRegex}$`, "i");
+    if (regex.test(message.content) && message.member.hasPermission(this.permission)) {
+      return true;
+    } else {
+      if (!message.member.hasPermission(this.permission)) {
+        return "PERMISSION";
+      }
+      if (!regex.test(message.content)) {
+        return "COMMAND";
+      }
+    }
+  }
+
+  commandTest(message: Message) {
+    const regex = new RegExp(`^\\${this.prefix}${this.name}`, "i");
+
+    return regex.test(message.content);
+
+  }
+
+  getArgs(message: string) {
+    const [command, ...args] = message.split(/\s+/);
+    return args;
   }
 }

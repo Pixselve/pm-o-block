@@ -9,6 +9,7 @@ import commands from "./modules/commands";
 import { beforeVerification } from './modules/joinVerification';
 import addBotServer           from './modules/addBotServer';
 import messageFilter          from './modules/messageFilter';
+import { MyEmbededError }     from "./classes/embeded";
 
 export const photon = new Photon();
 export const client = new Discord.Client();
@@ -55,10 +56,19 @@ export const client = new Discord.Client();
   client.on("message", async message => {
     if (await messageFilter(message, model)) return;
 
-    const foundCommand = commands.find(command => command.test(message));
+    const foundCommand = commands.find(command => command.commandTest(message));
     if (foundCommand) {
-      // @ts-ignore
-      await foundCommand.exec(message, foundCommand.getArgs(message.content));
+      const testResults = foundCommand.test(message);
+      if (testResults === true) {
+        // @ts-ignore
+        await foundCommand.exec(message, foundCommand.getArgs(message.content));
+      } else {
+        if (testResults === "PERMISSION") {
+          await message.channel.send(new MyEmbededError("You do not have the required permissions to execute this command.").embed);
+        } else {
+          await message.channel.send(new MyEmbededError(`The structure of the command is not correct. Make ${commands.find(command => command.name === "help").command} ${foundCommand.name} for more information.`).embed);
+        }
+      }
     } else {
       return;
     }
