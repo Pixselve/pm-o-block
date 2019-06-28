@@ -60,6 +60,4 @@
 
 - Rename the file "config.demo.ts" to "config.ts" in the "src" folder and modify the configuration.
 
-- You will need to download the model that will allow you to filter the NSFW images by [clicking here](https://s3.amazonaws.com/nsfwdetector/nsfwjs.zip). Then create a "nsfwjs" folder at the root and add the model files (group1-[...] and model.json) to it. (Source : [github.com/gantman/nsfw_model](https://github.com/gantman/nsfw_model))
-
 - Start the bot with "npm run start"
